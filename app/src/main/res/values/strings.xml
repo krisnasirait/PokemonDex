@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PokemonDex</string>
+    <string name="title_activity_poke_detail">PokeDetail</string>
 </resources>
