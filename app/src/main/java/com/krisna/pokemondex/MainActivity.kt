@@ -4,22 +4,38 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,7 +64,9 @@ class MainActivity : ComponentActivity() {
                             val pokemonId = backStackEntry.arguments?.getString("pokemonId")
                             val pokemon = PokemonData.pokemons.find { it.id == pokemonId }
                             if (pokemon != null) {
-                                PokemonDetail(pokemon)
+                                PokemonDetail(pokemon = pokemon) {
+                                    navController.popBackStack()
+                                }
                             } else {
                                 Text("Pokemon not found")
                             }
@@ -72,24 +90,94 @@ fun PokemonList(pokemons: List<Pokemon>, onPokemonClick: (Pokemon) -> Unit) {
 
 @Composable
 fun PokemonListItem(pokemon: Pokemon, onClick: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clickable(onClick = onClick)) {
-        Image(painter = painterResource(pokemon.image), contentDescription = pokemon.name)
-        Column(modifier = Modifier.padding(start = 8.dp)) {
-            Text(text = pokemon.name)
-            Text(text = pokemon.id)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(pokemon.image),
+                contentDescription = pokemon.name,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
+            )
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.padding(start = 8.dp)) {
+                Text(
+                    text = pokemon.name,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    text = pokemon.id,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PokemonDetail(pokemon: Pokemon) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Image(painter = painterResource(pokemon.image), contentDescription = pokemon.name)
-        Text(text = pokemon.name, fontSize = 30.sp)
-        Text(text = pokemon.id, fontSize = 20.sp)
-        Text(text = pokemon.description, fontSize = 16.sp)
+fun PokemonDetail(pokemon: Pokemon, onBack: () -> Unit) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        TopAppBar(
+            title = { Text(text = pokemon.name) },
+            navigationIcon = {
+                IconButton(onClick = { onBack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+            },
+        )
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 72.dp), // Account for the TopAppBar
+            color = MaterialTheme.colorScheme.background
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(pokemon.image),
+                    contentDescription = pokemon.name,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = pokemon.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = pokemon.id,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = pokemon.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
     }
 }
 
