@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                                         title = { Text("Pokemon List") },
                                         actions = {
                                             IconButton(onClick = { navController.navigate("about") }) {
-                                                Icon(imageVector = Icons.Default.AccountBox, contentDescription = "About")
+                                                Icon(imageVector = Icons.Default.AccountBox, contentDescription = "about_page")
                                             }
                                         }
                                     )
