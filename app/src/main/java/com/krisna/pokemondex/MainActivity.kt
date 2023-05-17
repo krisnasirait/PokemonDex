@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                     TopAppBar(
                                         title = { Text("Pokemon List") },
                                         actions = {
-                                            IconButton(onClick = { navController.navigate("about_page") }) {
+                                            IconButton(onClick = { navController.navigate("about") }) {
                                                 Icon(imageVector = Icons.Default.AccountBox, contentDescription = "about_page")
                                             }
                                         }
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
                                 Text("Pokemon not found")
                             }
                         }
-                        composable(route = "about_page") {
+                        composable(route = "about") {
                             AboutScreen(navController = navController)
                         }
                     }
